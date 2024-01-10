@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">亿空间</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">上传</string>
+    <string name="title_my">我的</string>
+    <string name="title_activity_login">欢迎登陆</string>
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_email">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登陆</string>
+    <string name="action_sign_in_short">登陆</string>
+    <string name="welcome">"欢迎!"</string>
+    <string name="invalid_username">无效用户名</string>
+    <string name="invalid_password">密码长度必须大于五个字符</string>
+    <string name="login_failed">"登陆失败"</string>
+</resources>
