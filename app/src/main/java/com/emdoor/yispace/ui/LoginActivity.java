@@ -1,8 +1,7 @@
-package com.emdoor.yispace.ui.login;
+package com.emdoor.yispace.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,14 +10,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.emdoor.yispace.MainActivity;
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.LoginResponse;
+import com.emdoor.yispace.model.LoginResponseSingleton;
 import com.emdoor.yispace.model.User;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
-
-import java.io.Serializable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,10 +37,22 @@ public class LoginActivity extends AppCompatActivity {
         userText = findViewById(R.id.username);
         passwordText = findViewById(R.id.password);
 
+        passwordText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+            }
+        });
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 登录逻辑
+                // 判断是否已登录
+                if (LoginResponseSingleton.getInstance().getCurrentUser()!= null) {
+                    Intent  intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    return;
+                }
+                // 登陆
                 String username = userText.getText().toString();
                 String password = passwordText.getText().toString();
                 Log.d(TAG, "onClick: " + username + " " + password);
@@ -55,9 +64,12 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             LoginResponse loginResponse = response.body();
                             Log.d(TAG, "onResponse: " + loginResponse.toString());
+                            // 保存登录成功的用户信息
+                            LoginResponseSingleton.getInstance().setCurrentUser(loginResponse);
+
+                            Log.d(TAG, "currentUser: " + LoginResponseSingleton.getInstance().getCurrentUser().toString());
                             // 跳转到MainActivity，并传入user
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("user", loginResponse.getUsername());
                             startActivity(intent);
                             finish();
                         } else {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_all_photos"
+            android:title="               全部照片" />
+        <item
+            android:id="@+id/menu_scene_classification"
+            android:title="               场景分类" />
+        <item
+            android:id="@+id/menu_person_classification"
+            android:title="               人物分类" />
+        <item
+            android:id="@+id/menu_collection"
+            android:title="               我的收藏" />
+        <item
+            android:id="@+id/menu_recycle"
+            android:title="               回收站" />
+        <item
+            android:id="@+id/menu_about"
+            android:title="               关于" />
+    </group>
+</menu>

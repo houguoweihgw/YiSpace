@@ -7,42 +7,45 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".ui.login.LoginActivity">
+    tools:context=".ui.LoginActivity">
 
     <RelativeLayout
-        android:layout_marginTop="150dp"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="150dp">
+
         <EditText
             android:id="@+id/username"
-            android:lines="1"
-            android:imeOptions="actionNext"
-            android:paddingLeft="4dp"
-            android:gravity="left|center"
             android:layout_width="300dp"
             android:layout_height="50dp"
+            android:gravity="left|center"
             android:hint="用户名"
-            android:textSize="16sp"
-            android:textColor="@color/black"/>
+            android:imeOptions="actionNext"
+            android:lines="1"
+            android:paddingLeft="4dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+
         <EditText
             android:id="@+id/password"
-            android:lines="1"
-            android:imeOptions="actionNext"
-            android:paddingLeft="4dp"
-            android:gravity="left|center"
             android:layout_width="300dp"
             android:layout_height="50dp"
+            android:gravity="left|center"
             android:hint="密码"
-            android:textSize="16sp"
-            android:textColor="@color/black"/>
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:lines="1"
+            android:paddingLeft="4dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -51,14 +54,15 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="登陆"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:gravity="center" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 

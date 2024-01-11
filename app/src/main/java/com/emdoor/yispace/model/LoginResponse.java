@@ -1,5 +1,8 @@
 package com.emdoor.yispace.model;
 
+/***
+ *  登录响应
+ */
 public class LoginResponse {
     private String token;
     private String username;
@@ -39,8 +42,6 @@ public class LoginResponse {
 
     @Override
     public String toString() {
-
-
         return "LoginResponse{" +
                 "token='" + token + '\'' +
                 ", username='" + username + '\'' +
