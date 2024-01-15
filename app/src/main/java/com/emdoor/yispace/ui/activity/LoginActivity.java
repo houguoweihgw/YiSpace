@@ -1,4 +1,4 @@
-package com.emdoor.yispace.ui;
+package com.emdoor.yispace.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

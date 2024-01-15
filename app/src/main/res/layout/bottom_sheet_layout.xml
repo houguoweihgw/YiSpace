@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--照片大小 0.7MB (688091字节)
+照片宽度 1536像素
+照片高度 2048像素
+相机品牌 Apple
+相机型号 iPhone 14 Pro
+曝光时间 1/480s
+光圈值 f/1.78
+ISO速度等级 80
+焦距 6.86mm
+拍摄时间 2023年10月6日 周五 01:44:20
+地理坐标 28.68N/115.86E (11.96m)
+标签 海滩,长廊,海岸-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choose_photo_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/gray">
+
+    <TextView
+        android:id="@+id/photo_size"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="照片大小"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/photo_dimension"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="照片尺寸"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_brand"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="相机品牌"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_model"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="相机型号"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_exposure_time"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="曝光时间"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_aperture"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="光圈值"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_iso"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="ISO速度等级"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/camera_focal_length"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="焦距"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/taken_date"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="拍摄时间"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/taken_coordinate"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="地理坐标"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5F5"/>
+    <TextView
+        android:id="@+id/photo_tag"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="标签"
+        android:textSize="15sp"
+        android:textColor="#191919"
+        android:gravity="center"/>
+</LinearLayout>

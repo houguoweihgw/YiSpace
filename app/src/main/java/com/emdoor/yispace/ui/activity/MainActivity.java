@@ -1,4 +1,4 @@
-package com.emdoor.yispace.ui;
+package com.emdoor.yispace.ui.activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,6 +16,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.LoginResponseSingleton;
+import com.emdoor.yispace.ui.fragment.AboutFragment;
+import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             sideNaviUserTextView.setText(username);
         }
 
-
         // 设置 NavigationView 的菜单项点击事件监听器
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -55,15 +54,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 设置 ActionBarDrawerToggle
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // 启用左上角的菜单按钮
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+//        // 设置 ActionBarDrawerToggle
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        // 启用左上角的菜单按钮
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
 
     }
 
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    //  加载全部照片Fragment
     private void loadAllPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
         AllPhotosFragment newFragment = new AllPhotosFragment();
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    //   加载关于Fragment
     private void loadAboutFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AboutFragment
         AboutFragment newFragment = new AboutFragment();
@@ -119,18 +120,18 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // 处理 ActionBarDrawerToggle 的点击事件
-        if (item.getItemId() == android.R.id.home) {
-            // 打开或关闭侧滑菜单
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // 处理 ActionBarDrawerToggle 的点击事件
+//        if (item.getItemId() == android.R.id.home) {
+//            // 打开或关闭侧滑菜单
+//            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//                drawerLayout.closeDrawer(GravityCompat.START);
+//            } else {
+//                drawerLayout.openDrawer(GravityCompat.START);
+//            }
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

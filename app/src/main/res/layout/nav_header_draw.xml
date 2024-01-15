@@ -18,13 +18,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="头像"
-        android:paddingLeft="20dp"
+        android:paddingLeft="0dp"
         app:srcCompat="@drawable/ic_avatar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="30dp"
+        android:paddingLeft="20dp"
         android:orientation="vertical">
 
         <TextView
