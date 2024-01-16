@@ -5,6 +5,7 @@ package com.emdoor.yispace.service;
 import com.emdoor.yispace.model.LoginResponse;
 import com.emdoor.yispace.model.PhotosResponse;
 import com.emdoor.yispace.model.RecycledPhotosResponse;
+import com.emdoor.yispace.model.SceneResponse;
 import com.emdoor.yispace.model.TotalPhotosCountResponse;
 import com.emdoor.yispace.model.User;
 
@@ -35,5 +36,8 @@ public interface ApiService {
 
     @GET("/home/recycledPhotos")
     Call<RecycledPhotosResponse> recycledPhotos(@Query("username") String username);
+
+    @GET("/home/sceneLabels")
+    Call<SceneResponse> sceneLabels(@Query("username") String username);
 
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="#ECE9E9"
+    android:orientation="horizontal"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    tools:ignore="MissingDefaultResource,UseCompoundDrawables">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/scene_cover"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/scene_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/scene_cover"
+            android:textColor="@android:color/black"
+            android:textSize="23sp"
+            tools:text="scene_title" />
+
+        <TextView
+            android:id="@+id/scene_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="45dp"
+            android:layout_toEndOf="@id/scene_cover"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            tools:text="scene_count" />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

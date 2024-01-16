@@ -20,6 +20,7 @@ import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
 import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
+import com.emdoor.yispace.ui.fragment.SceneClassFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         if (LoginResponseSingleton.getInstance().getCurrentUser() != null){
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.menu_scene_classification) {
             // 处理登出的逻辑
             Toast.makeText(this, "场景分类", Toast.LENGTH_SHORT).show();
-            loadAllPhotosFragment(newFragmentTransaction);
+            loadSceneClassFragment(newFragmentTransaction);
         }else if (itemId == R.id.menu_person_classification) {
             // 处理登出的逻辑
             Toast.makeText(this, "人物分类", Toast.LENGTH_SHORT).show();
@@ -111,6 +111,14 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+    //  加载场景分类Fragment
+    private void loadSceneClassFragment(FragmentTransaction fragmentTransaction) {
+        // 替换 fragment_container 中的内容为 AllPhotosFragment
+        SceneClassFragment newFragment = new SceneClassFragment();
+        fragmentTransaction.replace(R.id.fragment_container, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
 
     //  加载收藏照片Fragment
     private void loadLikedPhotosFragment(FragmentTransaction fragmentTransaction) {
@@ -120,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
+    //  加载回收站Fragment
     private void loadRecycledPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
         RecyclePhotosFragment newFragment = new RecyclePhotosFragment();
@@ -128,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
     //   加载关于Fragment
     private void loadAboutFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AboutFragment
