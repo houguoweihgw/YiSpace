@@ -18,10 +18,11 @@ import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.LoginResponseSingleton;
 import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
+import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
+import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
     private final String TAG = "MainActivity";
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -86,11 +87,11 @@ public class MainActivity extends AppCompatActivity {
         }else if (itemId == R.id.menu_collection) {
             // 处理登出的逻辑
             Toast.makeText(this, "我的收藏", Toast.LENGTH_SHORT).show();
-            loadAllPhotosFragment(newFragmentTransaction);
+            loadLikedPhotosFragment(newFragmentTransaction);
         }else if (itemId == R.id.menu_recycle) {
             // 处理登出的逻辑
             Toast.makeText(this, "回收站", Toast.LENGTH_SHORT).show();
-            loadAllPhotosFragment(newFragmentTransaction);
+            loadRecycledPhotosFragment(newFragmentTransaction);
         }else if (itemId == R.id.menu_about) {
             // 处理登出的逻辑
             Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
@@ -106,6 +107,23 @@ public class MainActivity extends AppCompatActivity {
     private void loadAllPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
         AllPhotosFragment newFragment = new AllPhotosFragment();
+        fragmentTransaction.replace(R.id.fragment_container, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    //  加载收藏照片Fragment
+    private void loadLikedPhotosFragment(FragmentTransaction fragmentTransaction) {
+        // 替换 fragment_container 中的内容为 AllPhotosFragment
+        LikedPhotosFragment newFragment = new LikedPhotosFragment();
+        fragmentTransaction.replace(R.id.fragment_container, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    private void loadRecycledPhotosFragment(FragmentTransaction fragmentTransaction) {
+        // 替换 fragment_container 中的内容为 AllPhotosFragment
+        RecyclePhotosFragment newFragment = new RecyclePhotosFragment();
         fragmentTransaction.replace(R.id.fragment_container, newFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

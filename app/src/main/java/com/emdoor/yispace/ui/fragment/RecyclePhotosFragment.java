@@ -14,12 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
-import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.model.PhotosResponse;
-import com.emdoor.yispace.model.TotalPhotosCountResponse;
+import com.emdoor.yispace.model.RecycledPhotosResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
+import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 
 import java.io.Serializable;
@@ -30,79 +30,29 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AllPhotosFragment extends Fragment{
+public class RecyclePhotosFragment extends Fragment {
     private ApiService apiService;
-    private final String TAG = "AllPhotosFragment";
-    private int totalPhotosCount = 0;
-    private List<Photo> photoList = new ArrayList<>();
+    private final String TAG = "RecyclePhotosFragment";
+    private List<Photo> recycledPhotoList = new ArrayList<>();
     private PhotoViewModel photoViewModel;
     private PhotoAdapter photoAdapter;
+
+    public static RecyclePhotosFragment newInstance(String param1, String param2) {
+        RecyclePhotosFragment fragment = new RecyclePhotosFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    public void loadCountAndPhotos() {
-        apiService = RetrofitClient.getApiService();
-        // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
-        // 获取照片总数
-        apiService.totalPhotosCount("admin").enqueue(new Callback<TotalPhotosCountResponse>() {
-            @Override
-            public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
-                if (response.isSuccessful()) {
-                    TotalPhotosCountResponse totalCount = response.body();
-                    Log.d(TAG, "onResponse: " + totalCount.toString());
-                    totalPhotosCount = totalCount.getTotal();
-                    // 查询照片
-                    loadPhotos();
-                } else {
-                    Log.d(TAG, "onResponse: " + response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TotalPhotosCountResponse> call, Throwable t) {
-                // 网络请求失败后的处理逻辑
-                Log.d(TAG, "onFailure: " + t.getMessage());
-            }
-        });
-    }
-
-    private void loadPhotos() {
-        // 查询照片
-        apiService.photos("admin", 1, totalPhotosCount).enqueue(new Callback<PhotosResponse>() {
-            @Override
-            public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
-                if (response.isSuccessful()) {
-                    PhotosResponse photosResponse = response.body();
-                    Log.d(TAG, "onResponse: " + photosResponse.toString());
-                    photoList = photosResponse.getPhotos();
-                    // 更新适配器数据
-                    if (photoAdapter != null) {
-                        photoAdapter.updatePhotos(photoList);
-                    }
-                    photoViewModel.setPhotoList(photoList);
-                } else {
-                    Log.d(TAG, "onResponse: " + response);
-                }
-            }
-            @Override
-            public void onFailure(Call<PhotosResponse> call, Throwable t) {
-                // 网络请求失败后的处理逻辑
-                Log.d(TAG, "onFailure: " + t.getMessage());
-                Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_all_photos, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycle_photos, container, false);
         // 1.找到RecyclerView控件的引用
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.recycledPhotosRecyclerView);
         // 2.加载照片数据
 
         // 初始化 ViewModel
@@ -111,15 +61,15 @@ public class AllPhotosFragment extends Fragment{
         List<Photo> cachedPhotoList = photoViewModel.getPhotoList();
         if (cachedPhotoList != null && !cachedPhotoList.isEmpty()) {
             // 使用缓存的数据
-            photoList = cachedPhotoList;
-            photoAdapter.updatePhotos(photoList);
+            recycledPhotoList = cachedPhotoList;
+            photoAdapter.updatePhotos(recycledPhotoList);
         } else {
             // 没有缓存的数据，发起网络请求
-            loadCountAndPhotos();
+            loadPhotos();
         }
 
         // 3.创建photoAdapter适配器
-        photoAdapter = new PhotoAdapter(photoList);
+        photoAdapter = new PhotoAdapter(recycledPhotoList);
         // 4.设置RecyclerView的布局管理器和适配器
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,  StaggeredGridLayoutManager.VERTICAL));
@@ -143,5 +93,33 @@ public class AllPhotosFragment extends Fragment{
             }
         });
         return view;
+    }
+
+    private void loadPhotos() {
+        apiService = RetrofitClient.getApiService();
+        // 查询照片
+        apiService.recycledPhotos("admin").enqueue(new Callback<RecycledPhotosResponse>() {
+            @Override
+            public void onResponse(Call<RecycledPhotosResponse> call, Response<RecycledPhotosResponse> response) {
+                if (response.isSuccessful()) {
+                    RecycledPhotosResponse photosResponse = response.body();
+                    Log.d(TAG, "onResponse: " + photosResponse.getPhotos().size());
+                    recycledPhotoList = photosResponse.getPhotos();
+                    // 更新适配器数据
+                    if (photoAdapter != null) {
+                        photoAdapter.updatePhotos(recycledPhotoList);
+                    }
+                    photoViewModel.setPhotoList(recycledPhotoList);
+                } else {
+                    Log.d(TAG, "onResponse: " + response);
+                }
+            }
+            @Override
+            public void onFailure(Call<RecycledPhotosResponse> call, Throwable t) {
+                // 网络请求失败后的处理逻辑
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

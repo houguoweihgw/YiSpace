@@ -4,20 +4,20 @@ import java.util.Date;
 public class ItemMetadata {
     private long id;
     private long userId;
-    private String exposureTime;
+    private String exposure_time;
     private double aperture;
     private int iso;
-    private double focalLength;
+    private double focal_length;
     private double latitude;
     private double longitude;
     private double altitude;
     private String make;
     private String model;
-    private Date dateTaken;
-    private long fileSize;
-    private int imageWidth;
-    private int imageLength;
-    private String sceneTags;
+    private String date_taken;
+    private long file_size;
+    private int image_width;
+    private int image_length;
+    private String scene_tags;
 
     // 构造方法、getter和setter方法
 
@@ -38,11 +38,11 @@ public class ItemMetadata {
     }
 
     public String getExposureTime() {
-        return exposureTime;
+        return exposure_time;
     }
 
     public void setExposureTime(String exposureTime) {
-        this.exposureTime = exposureTime;
+        this.exposure_time = exposureTime;
     }
 
     public double getAperture() {
@@ -62,11 +62,11 @@ public class ItemMetadata {
     }
 
     public double getFocalLength() {
-        return focalLength;
+        return focal_length;
     }
 
     public void setFocalLength(double focalLength) {
-        this.focalLength = focalLength;
+        this.focal_length = focalLength;
     }
 
     public double getLatitude() {
@@ -109,48 +109,48 @@ public class ItemMetadata {
         this.model = model;
     }
 
-    public Date getDateTaken() {
-        return dateTaken;
+    public String getDateTaken() {
+        return date_taken;
     }
 
-    public void setDateTaken(Date dateTaken) {
-        this.dateTaken = dateTaken;
+    public void setDateTaken(String dateTaken) {
+        this.date_taken = dateTaken;
     }
 
     public long getFileSize() {
-        return fileSize;
+        return file_size;
     }
 
     public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
+        this.file_size = fileSize;
     }
 
     public int getImageWidth() {
-        return imageWidth;
+        return image_width;
     }
 
     public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
+        this.image_width = imageWidth;
     }
 
     public int getImageLength() {
-        return imageLength;
+        return image_length;
     }
 
     public void setImageLength(int imageLength) {
-        this.imageLength = imageLength;
+        this.image_length = imageLength;
     }
 
     public String getSceneTags() {
-        return sceneTags;
+        return scene_tags;
     }
 
     public void setSceneTags(String sceneTags) {
-        this.sceneTags = sceneTags;
+        this.scene_tags = sceneTags;
     }
 
     @Override
     public String toString() {
-        return "Image{" + "id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + ", altitude=" + altitude + ", make=" + make + ", model=" + model + ", dateTaken=" + dateTaken + ", fileSize=" + fileSize + ", imageWidth=" + imageWidth + ", imageLength=" + imageLength + ", sceneTags=" + sceneTags + '}';
+        return "Image{" + "id=" + id + ", exposure_time=" +exposure_time + ", aperture=" + aperture+ ", iso=" +iso+ ", focal_length=" +focal_length + ", latitude=" + latitude + ", longitude=" + longitude + ", altitude=" + altitude + ", make=" + make + ", model=" + model + ", dateTaken=" + date_taken + ", fileSize=" + file_size + ", imageWidth=" + image_width + ", imageLength=" + image_length + ", sceneTags=" + scene_tags + '}';
     }
 }

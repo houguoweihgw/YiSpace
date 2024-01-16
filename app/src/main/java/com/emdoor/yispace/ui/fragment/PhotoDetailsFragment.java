@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Photo;
+import com.emdoor.yispace.utils.DateUtils;
 import com.emdoor.yispace.utils.ImageUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -72,8 +73,42 @@ public class PhotoDetailsFragment extends Fragment {
             public void onClick(View view) {
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme);
                 View bottomView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_layout, null);
+                Log.d(TAG, "onClick: "+photo.getMetadata().toString());
+                // 设置照片存储大小
+                TextView sizeView = bottomView.findViewById(R.id.photo_size);
+                sizeView.setText("照片大小: "+DateUtils.kbToMb(photo.getMetadata().getFileSize())+"MB"+" ("+photo.getMetadata().getFileSize()+"字节)");
+                // 设置照片尺寸
+                TextView resolutionView = bottomView.findViewById(R.id.photo_dimension);
+                resolutionView.setText("照片尺寸: "+photo.getMetadata().getImageLength()+" x "+photo.getMetadata().getImageWidth());
+                // 设置相机品牌
                 TextView brandView = bottomView.findViewById(R.id.camera_brand);
                 brandView.setText("相机品牌: "+photo.getMetadata().getMake());
+                // 设置相机型号
+                TextView modelView = bottomView.findViewById(R.id.camera_model);
+                modelView.setText("相机型号: "+photo.getMetadata().getModel());
+                // 设置照片拍摄时间
+                TextView dateView = bottomView.findViewById(R.id.taken_date);
+                dateView.setText("照片拍摄时间: "+ DateUtils.formatDateTime(photo.getMetadata().getDateTaken()) );
+                // 设置曝光时间
+                TextView exposureView = bottomView.findViewById(R.id.camera_exposure_time);
+                exposureView.setText("曝光时间: "+photo.getMetadata().getExposureTime());
+                // 设置光圈值
+                TextView apertureView = bottomView.findViewById(R.id.camera_aperture);
+                apertureView.setText("光圈值: f/"+photo.getMetadata().getAperture());
+                // 设置ISO感光度
+                TextView isoView = bottomView.findViewById(R.id.camera_iso);
+                isoView.setText("ISO感光度: "+photo.getMetadata().getIso());
+                // 设置焦距
+                TextView focalLengthView = bottomView.findViewById(R.id.camera_focal_length);
+                focalLengthView.setText("焦距: "+photo.getMetadata().getFocalLength()+"mm");
+                // 设置拍摄地点
+                TextView locationView = bottomView.findViewById(R.id.taken_coordinate);
+                locationView.setText("地理坐标: "+DateUtils.getLatitude(photo.getMetadata().getLatitude()) +"/"+
+                        DateUtils.getLongitude(photo.getMetadata().getLongitude()) +" ("+
+                        DateUtils.getAltitude(photo.getMetadata().getAltitude())+")" );
+                // 设置照片标签
+                TextView labelView = bottomView.findViewById(R.id.photo_tag);
+                labelView.setText("标签: "+photo.getMetadata().getSceneTags());
                 bottomSheetDialog.setContentView(bottomView);
                 bottomSheetDialog.show();
             }

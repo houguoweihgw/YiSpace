@@ -22,9 +22,7 @@ import java.util.List;
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
     private final String  TAG = "PhotoAdapter";
     private List<Photo> photoList;
-
     private OnItemClickListener onItemClickListener;
-
     public interface OnItemClickListener {
         void onItemClick(Photo photo);
     }
