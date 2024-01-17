@@ -18,6 +18,7 @@ import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.LoginResponseSingleton;
 import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
+import com.emdoor.yispace.ui.fragment.FaceClassFragment;
 import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
 import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
 import com.emdoor.yispace.ui.fragment.SceneClassFragment;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }else if (itemId == R.id.menu_person_classification) {
             // 处理登出的逻辑
             Toast.makeText(this, "人物分类", Toast.LENGTH_SHORT).show();
-            loadAllPhotosFragment(newFragmentTransaction);
+            loadFaceClassFragment(newFragmentTransaction);
         }else if (itemId == R.id.menu_collection) {
             // 处理登出的逻辑
             Toast.makeText(this, "我的收藏", Toast.LENGTH_SHORT).show();
@@ -120,7 +121,14 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
+    //  加载人物分类Fragment
+    private void loadFaceClassFragment(FragmentTransaction fragmentTransaction) {
+        // 替换 fragment_container 中的内容为 AllPhotosFragment
+        FaceClassFragment newFragment = new FaceClassFragment();
+        fragmentTransaction.replace(R.id.fragment_container, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
     //  加载收藏照片Fragment
     private void loadLikedPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment

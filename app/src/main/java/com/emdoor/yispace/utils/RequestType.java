@@ -6,5 +6,5 @@ public enum RequestType {
     // 场景照片
     SCENE_PHOTO,
     // 人物照片
-    PERSON_PHOTO
+    FACE_PHOTO
 }

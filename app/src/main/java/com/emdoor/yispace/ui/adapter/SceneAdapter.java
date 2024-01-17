@@ -23,7 +23,6 @@ import java.util.List;
 
 public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.SceneViewHolder> {
     private final String TAG = "SceneAdapter";
-    private Context context;
     private List<Scene> sceneList;
     private SceneAdapter.OnItemClickListener onItemClickListener;
     public interface OnItemClickListener {

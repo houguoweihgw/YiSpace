@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="#ECE9E9"
+    android:orientation="vertical"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    tools:ignore="MissingDefaultResource,UseCompoundDrawables">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/face_cover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/face_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/face_cover"
+            android:layout_marginTop="15dp"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            tools:text="face_title" />
+
+        <TextView
+            android:id="@+id/face_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/face_title"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            tools:text="face_count" />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

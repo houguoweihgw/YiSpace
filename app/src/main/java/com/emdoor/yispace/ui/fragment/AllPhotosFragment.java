@@ -39,10 +39,10 @@ public class AllPhotosFragment extends Fragment{
     private PhotoViewModel photoViewModel;
     private PhotoAdapter photoAdapter;
     private RequestType  requestType;
-    private String labelName;
-    public AllPhotosFragment(RequestType type,String labelName) {
+    private String extraInfo;
+    public AllPhotosFragment(RequestType type,String extraInfo) {
         requestType = type;
-        this.labelName = labelName;
+        this.extraInfo = extraInfo;
     }
 
     @Override
@@ -80,7 +80,32 @@ public class AllPhotosFragment extends Fragment{
             apiService = RetrofitClient.getApiService();
             // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
             // 获取照片总数
-            apiService.labelPhotoCount("admin",labelName).enqueue(new Callback<TotalPhotosCountResponse>() {
+            apiService.labelPhotoCount("admin",extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
+                @Override
+                public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
+                    if (response.isSuccessful()) {
+                        TotalPhotosCountResponse totalCount = response.body();
+                        Log.d(TAG, "onResponse: " + totalCount.toString());
+                        totalPhotosCount = totalCount.getTotal();
+                        // 查询照片
+                        loadPhotos();
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TotalPhotosCountResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                }
+            });
+        }
+        else if(requestType==RequestType.FACE_PHOTO){
+            apiService = RetrofitClient.getApiService();
+            // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
+            // 获取照片总数
+            apiService.clusterPhotoCount("admin",extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
                 @Override
                 public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
                     if (response.isSuccessful()) {
@@ -133,7 +158,7 @@ public class AllPhotosFragment extends Fragment{
         }
         else if (requestType == RequestType.SCENE_PHOTO){
             // 查询照片
-            apiService.labelPhotos("admin", 1, totalPhotosCount,labelName).enqueue(new Callback<PhotosResponse>() {
+            apiService.labelPhotos("admin", 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
                 @Override
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
@@ -150,6 +175,32 @@ public class AllPhotosFragment extends Fragment{
                     }
                 }
 
+                @Override
+                public void onFailure(Call<PhotosResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                    Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if (requestType == RequestType.FACE_PHOTO){
+            // 查询照片
+            apiService.clusterPhotos("admin", 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
+                @Override
+                public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
+                    if (response.isSuccessful()) {
+                        PhotosResponse photosResponse = response.body();
+                        Log.d(TAG, "onResponse: " + photosResponse.toString());
+                        photoList = photosResponse.getPhotos();
+                        // 更新适配器数据
+                        if (photoAdapter != null) {
+                            photoAdapter.updatePhotos(photoList);
+                        }
+                        photoViewModel.setPhotoList(photoList);
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
+                    }
+                }
                 @Override
                 public void onFailure(Call<PhotosResponse> call, Throwable t) {
                     // 网络请求失败后的处理逻辑

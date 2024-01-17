@@ -2,6 +2,7 @@
 package com.emdoor.yispace.service;
 
 
+import com.emdoor.yispace.model.FaceResponse;
 import com.emdoor.yispace.model.LoginResponse;
 import com.emdoor.yispace.model.PhotosResponse;
 import com.emdoor.yispace.model.RecycledPhotosResponse;
@@ -45,5 +46,15 @@ public interface ApiService {
 
     @GET("/home/labelPhotos")
     Call<PhotosResponse> labelPhotos(@Query("username") String username, @Query("page") int page,@Query("perPage") int perPage,@Query("label") String label);
+
+    @GET("/home/faceClusters")
+    Call<FaceResponse> faceClusters(@Query("username") String username);
+
+    @GET("/home/clusterPhotoCount")
+    Call<TotalPhotosCountResponse> clusterPhotoCount(@Query("username") String username,@Query("cluster") String cluster);
+
+    @GET("/home/clusterPhotos")
+    Call<PhotosResponse> clusterPhotos(@Query("username") String username, @Query("page") int page,@Query("perPage") int perPage,@Query("cluster") String cluster);
+
 
 }
