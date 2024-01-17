@@ -21,6 +21,7 @@ import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
 import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
 import com.emdoor.yispace.ui.fragment.SceneClassFragment;
+import com.emdoor.yispace.utils.RequestType;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     //  加载全部照片Fragment
     private void loadAllPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
-        AllPhotosFragment newFragment = new AllPhotosFragment();
+        AllPhotosFragment newFragment = new AllPhotosFragment(RequestType.ALL_PHOTO,null);
         fragmentTransaction.replace(R.id.fragment_container, newFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

@@ -1,6 +1,8 @@
 package com.emdoor.yispace.model;
 
-public class Scene {
+import java.io.Serializable;
+
+public class Scene implements Serializable {
     private String label_name;
     private int label_count;
     private String label_cover;

@@ -21,6 +21,7 @@ import com.emdoor.yispace.model.TotalPhotosCountResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
+import com.emdoor.yispace.utils.RequestType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,6 +38,12 @@ public class AllPhotosFragment extends Fragment{
     private List<Photo> photoList = new ArrayList<>();
     private PhotoViewModel photoViewModel;
     private PhotoAdapter photoAdapter;
+    private RequestType  requestType;
+    private String labelName;
+    public AllPhotosFragment(RequestType type,String labelName) {
+        requestType = type;
+        this.labelName = labelName;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,56 +51,113 @@ public class AllPhotosFragment extends Fragment{
     }
 
     public void loadCountAndPhotos() {
-        apiService = RetrofitClient.getApiService();
-        // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
-        // 获取照片总数
-        apiService.totalPhotosCount("admin").enqueue(new Callback<TotalPhotosCountResponse>() {
-            @Override
-            public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
-                if (response.isSuccessful()) {
-                    TotalPhotosCountResponse totalCount = response.body();
-                    Log.d(TAG, "onResponse: " + totalCount.toString());
-                    totalPhotosCount = totalCount.getTotal();
-                    // 查询照片
-                    loadPhotos();
-                } else {
-                    Log.d(TAG, "onResponse: " + response);
+        if (requestType==RequestType.ALL_PHOTO){
+            apiService = RetrofitClient.getApiService();
+            // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
+            // 获取照片总数
+            apiService.totalPhotosCount("admin").enqueue(new Callback<TotalPhotosCountResponse>() {
+                @Override
+                public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
+                    if (response.isSuccessful()) {
+                        TotalPhotosCountResponse totalCount = response.body();
+                        Log.d(TAG, "onResponse: " + totalCount.toString());
+                        totalPhotosCount = totalCount.getTotal();
+                        // 查询照片
+                        loadPhotos();
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<TotalPhotosCountResponse> call, Throwable t) {
-                // 网络请求失败后的处理逻辑
-                Log.d(TAG, "onFailure: " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<TotalPhotosCountResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                }
+            });
+        }
+        else if(requestType==RequestType.SCENE_PHOTO){
+            apiService = RetrofitClient.getApiService();
+            // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
+            // 获取照片总数
+            apiService.labelPhotoCount("admin",labelName).enqueue(new Callback<TotalPhotosCountResponse>() {
+                @Override
+                public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
+                    if (response.isSuccessful()) {
+                        TotalPhotosCountResponse totalCount = response.body();
+                        Log.d(TAG, "onResponse: " + totalCount.toString());
+                        totalPhotosCount = totalCount.getTotal();
+                        // 查询照片
+                        loadPhotos();
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TotalPhotosCountResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                }
+            });
+        }
     }
 
     private void loadPhotos() {
-        // 查询照片
-        apiService.photos("admin", 1, totalPhotosCount).enqueue(new Callback<PhotosResponse>() {
-            @Override
-            public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
-                if (response.isSuccessful()) {
-                    PhotosResponse photosResponse = response.body();
-                    Log.d(TAG, "onResponse: " + photosResponse.toString());
-                    photoList = photosResponse.getPhotos();
-                    // 更新适配器数据
-                    if (photoAdapter != null) {
-                        photoAdapter.updatePhotos(photoList);
+        if (requestType==RequestType.ALL_PHOTO) {
+            // 查询照片
+            apiService.photos("admin", 1, totalPhotosCount).enqueue(new Callback<PhotosResponse>() {
+                @Override
+                public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
+                    if (response.isSuccessful()) {
+                        PhotosResponse photosResponse = response.body();
+                        Log.d(TAG, "onResponse: " + photosResponse.toString());
+                        photoList = photosResponse.getPhotos();
+                        // 更新适配器数据
+                        if (photoAdapter != null) {
+                            photoAdapter.updatePhotos(photoList);
+                        }
+                        photoViewModel.setPhotoList(photoList);
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
                     }
-                    photoViewModel.setPhotoList(photoList);
-                } else {
-                    Log.d(TAG, "onResponse: " + response);
                 }
-            }
-            @Override
-            public void onFailure(Call<PhotosResponse> call, Throwable t) {
-                // 网络请求失败后的处理逻辑
-                Log.d(TAG, "onFailure: " + t.getMessage());
-                Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+                @Override
+                public void onFailure(Call<PhotosResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                    Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if (requestType == RequestType.SCENE_PHOTO){
+            // 查询照片
+            apiService.labelPhotos("admin", 1, totalPhotosCount,labelName).enqueue(new Callback<PhotosResponse>() {
+                @Override
+                public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
+                    if (response.isSuccessful()) {
+                        PhotosResponse photosResponse = response.body();
+                        Log.d(TAG, "onResponse: " + photosResponse.toString());
+                        photoList = photosResponse.getPhotos();
+                        // 更新适配器数据
+                        if (photoAdapter != null) {
+                            photoAdapter.updatePhotos(photoList);
+                        }
+                        photoViewModel.setPhotoList(photoList);
+                    } else {
+                        Log.d(TAG, "onResponse: " + response);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PhotosResponse> call, Throwable t) {
+                    // 网络请求失败后的处理逻辑
+                    Log.d(TAG, "onFailure: " + t.getMessage());
+                    Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override

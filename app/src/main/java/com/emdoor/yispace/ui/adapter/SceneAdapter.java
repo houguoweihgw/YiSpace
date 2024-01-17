@@ -25,6 +25,14 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.SceneViewHol
     private final String TAG = "SceneAdapter";
     private Context context;
     private List<Scene> sceneList;
+    private SceneAdapter.OnItemClickListener onItemClickListener;
+    public interface OnItemClickListener {
+        void onItemClick(Scene Scene);
+    }
+
+    public void setOnItemClickListener(SceneAdapter.OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
 
     public SceneAdapter(List<Scene> sceneList) {
         this.sceneList = sceneList;
@@ -60,7 +68,19 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.SceneViewHol
 
         Log.d(TAG, "onBindViewHolder: "+scene.getLabel_name());
         holder.sceneTitleTextView.setText(scene.getLabel_name());
-        holder.sceneCountTextView.setText("该场景共有: " + scene.getLabel_count()+" 张照片");
+        holder.sceneCountTextView.setText("共有 " + scene.getLabel_count()+" 张照片");
+
+        // 为 ImageView 设置点击监听器
+        // 设置点击事件
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 触发点击事件回调
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(scene);
+                }
+            }
+        });
     }
 
     public void updateScenes(List<Scene> newScenes) {
@@ -85,6 +105,4 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.SceneViewHol
             sceneCountTextView = itemView.findViewById(R.id.scene_count);
         }
     }
-
-
 }

@@ -40,4 +40,10 @@ public interface ApiService {
     @GET("/home/sceneLabels")
     Call<SceneResponse> sceneLabels(@Query("username") String username);
 
+    @GET("/home/labelPhotoCount")
+    Call<TotalPhotosCountResponse> labelPhotoCount(@Query("username") String username,@Query("label") String label);
+
+    @GET("/home/labelPhotos")
+    Call<PhotosResponse> labelPhotos(@Query("username") String username, @Query("page") int page,@Query("perPage") int perPage,@Query("label") String label);
+
 }

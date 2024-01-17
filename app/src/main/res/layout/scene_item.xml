@@ -23,28 +23,32 @@
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher" />
 
-        <TextView
-            android:id="@+id/scene_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="15dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_toEndOf="@id/scene_cover"
-            android:textColor="@android:color/black"
-            android:textSize="23sp"
-            tools:text="scene_title" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/scene_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="45dp"
-            android:layout_toEndOf="@id/scene_cover"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            tools:text="scene_count" />
+            <TextView
+                android:id="@+id/scene_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/black"
+                android:textSize="23sp"
+                tools:text="scene_title" />
+
+            <TextView
+                android:id="@+id/scene_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="65dp"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                tools:text="scene_count" />
+        </LinearLayout>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

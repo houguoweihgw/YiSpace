@@ -25,7 +25,9 @@ import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 import com.emdoor.yispace.ui.adapter.SceneAdapter;
 import com.emdoor.yispace.ui.adapter.SceneViewModel;
+import com.emdoor.yispace.utils.RequestType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +74,23 @@ public class SceneClassFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(sceneAdapter);
+        sceneAdapter.setOnItemClickListener(new SceneAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(Scene scene) {
+                // 创建一个新的 Fragment 实例
+                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO,scene.getLabel_name());
+                // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("scene", (Serializable) scene);
+                photoDetailsFragment.setArguments(bundle);
+
+                // 使用 FragmentManager 加载并显示新的 Fragment
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, photoDetailsFragment) // R.id.fragment_container 是你放置 Fragment 的容器的布局 ID
+                        .addToBackStack(null) // 将当前 Fragment 加入回退栈，以便返回时能回到前一个 Fragment
+                        .commit();
+            }
+        });
         return  view;
     }
 
