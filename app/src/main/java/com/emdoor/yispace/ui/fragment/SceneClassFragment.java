@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
-import com.emdoor.yispace.model.Photo;
-import com.emdoor.yispace.model.PhotosResponse;
 import com.emdoor.yispace.model.Scene;
-import com.emdoor.yispace.model.SceneResponse;
+import com.emdoor.yispace.response.SceneResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
-import com.emdoor.yispace.ui.adapter.PhotoAdapter;
-import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 import com.emdoor.yispace.ui.adapter.SceneAdapter;
 import com.emdoor.yispace.ui.adapter.SceneViewModel;
 import com.emdoor.yispace.utils.RequestType;

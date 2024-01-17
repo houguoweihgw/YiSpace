@@ -11,8 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.emdoor.yispace.R;
-import com.emdoor.yispace.model.LoginResponse;
-import com.emdoor.yispace.model.LoginResponseSingleton;
+import com.emdoor.yispace.response.LoginResponse;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.model.User;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;

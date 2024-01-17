@@ -1,4 +1,4 @@
-package com.emdoor.yispace.model;
+package com.emdoor.yispace.response;
 
 /***
  *  登录响应

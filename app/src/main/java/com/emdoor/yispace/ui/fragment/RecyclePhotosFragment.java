@@ -15,8 +15,7 @@ import android.widget.Toast;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Photo;
-import com.emdoor.yispace.model.PhotosResponse;
-import com.emdoor.yispace.model.RecycledPhotosResponse;
+import com.emdoor.yispace.response.RecycledPhotosResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;

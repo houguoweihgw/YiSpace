@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.emdoor.yispace.R;
-import com.emdoor.yispace.model.LoginResponseSingleton;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.emdoor.yispace.ui.fragment.FaceClassFragment;

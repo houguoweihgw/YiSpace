@@ -1,4 +1,6 @@
-package com.emdoor.yispace.model;
+package com.emdoor.yispace.response;
+
+import com.emdoor.yispace.model.Face;
 
 import java.util.List;
 

@@ -16,22 +16,27 @@ import android.widget.Toast;
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.model.Photo;
-import com.emdoor.yispace.model.PhotosResponse;
-import com.emdoor.yispace.model.TotalPhotosCountResponse;
+import com.emdoor.yispace.response.PhotosResponse;
+import com.emdoor.yispace.response.TotalPhotosCountResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 import com.emdoor.yispace.utils.RequestType;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AllPhotosFragment extends Fragment{
+public class AllPhotosFragment extends Fragment {
     private ApiService apiService;
     private final String TAG = "AllPhotosFragment";
     private int totalPhotosCount = 0;
@@ -48,6 +53,7 @@ public class AllPhotosFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     public void loadCountAndPhotos() {
@@ -211,6 +217,26 @@ public class AllPhotosFragment extends Fragment{
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onPhotoDeletedEvent(Photo photo) {
+        Log.d(TAG, "updatePhotoListAfterDeletion: "+photo.getId());
+        Log.d(TAG, "photoList.size: "+ photoList.size());
+        // 在你的照片列表中找到被删除的照片并移除
+        Iterator<Photo> iterator = photoList.iterator();
+        while (iterator.hasNext()) {
+            Photo temp = iterator.next();
+            Log.d(TAG, "current photo: "+ temp.getId());
+            if (temp.getId() == photo.getId()) {
+                iterator.remove();
+                break;
+            }
+        }
+        // 通知适配器刷新
+        if (photoAdapter != null) {
+            photoAdapter.notifyDataSetChanged();
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -244,7 +270,6 @@ public class AllPhotosFragment extends Fragment{
             public void onItemClick(Photo photo) {
                 // 创建一个新的 Fragment 实例
                 PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment();
-
                 // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("photo", (Serializable) photo);
@@ -258,5 +283,11 @@ public class AllPhotosFragment extends Fragment{
             }
         });
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
