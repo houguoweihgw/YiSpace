@@ -1,7 +1,14 @@
 package com.emdoor.yispace.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,12 +16,14 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
+import androidx.appcompat.widget.Toolbar;
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.event.RecyclePhotoEvent;
+import com.emdoor.yispace.ui.activity.MainActivity;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -23,6 +32,7 @@ import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 import com.emdoor.yispace.utils.RequestType;
+import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,15 +56,19 @@ public class AllPhotosFragment extends Fragment {
     private PhotoAdapter photoAdapter;
     private RequestType  requestType;
     private String extraInfo;
-    public AllPhotosFragment(RequestType type,String extraInfo) {
+    private String fragmentTitle;
+    public AllPhotosFragment(RequestType type,String extraInfo,String fragmentTitle) {
         requestType = type;
         this.extraInfo = extraInfo;
+        this.fragmentTitle = fragmentTitle;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(fragmentTitle);
     }
 
     public void loadCountAndPhotos() {
@@ -246,6 +260,12 @@ public class AllPhotosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all_photos, container, false);
+        // 获取与Fragment关联的Activity
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        // 显示Toolbar
+        if (activity != null && activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().show();
+        }
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         // 2.加载照片数据

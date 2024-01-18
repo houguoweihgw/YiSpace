@@ -2,6 +2,8 @@ package com.emdoor.yispace.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,12 +53,22 @@ public class LikedPhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("我的收藏");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_liked_photos, container, false);
+
+        // 获取与Fragment关联的Activity
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        // 显示Toolbar
+        if (activity != null && activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().show();
+        }
+
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.likedPhotosRecyclerView);
         // 2.加载照片数据

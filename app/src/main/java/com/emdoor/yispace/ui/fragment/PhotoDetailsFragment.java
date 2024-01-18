@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -65,6 +67,14 @@ public class PhotoDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_photo_details, container, false);
+
+        // 获取与Fragment关联的Activity
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        // 显示照片详情时隐藏Toolbar
+        if (activity != null && activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().hide();
+        }
+
         imageView = view.findViewById(R.id.imageViewDetails);
         overlayLayout = view.findViewById(R.id.overlayLayout);
         nameTextView = view.findViewById(R.id.imageViewDetails_name);

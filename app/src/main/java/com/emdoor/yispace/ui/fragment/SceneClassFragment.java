@@ -2,6 +2,7 @@ package com.emdoor.yispace.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +42,8 @@ public class SceneClassFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("场景分类");
     }
 
     @Override
@@ -73,7 +76,7 @@ public class SceneClassFragment extends Fragment {
             @Override
             public void onItemClick(Scene scene) {
                 // 创建一个新的 Fragment 实例
-                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO,scene.getLabel_name());
+                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO,scene.getLabel_name(),scene.getLabel_name());
                 // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("scene", (Serializable) scene);

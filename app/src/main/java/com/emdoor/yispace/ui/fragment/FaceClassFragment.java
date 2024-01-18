@@ -2,6 +2,7 @@ package com.emdoor.yispace.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,8 @@ public class FaceClassFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("人物分类");
     }
 
     @Override
@@ -72,7 +75,7 @@ public class FaceClassFragment extends Fragment {
             @Override
             public void onItemClick(Face face) {
                 // 创建一个新的 Fragment 实例
-                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.FACE_PHOTO,face.getFace_name());
+                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.FACE_PHOTO,face.getFace_name(),face.getFace_name());
                 // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("face", (Serializable) face);
