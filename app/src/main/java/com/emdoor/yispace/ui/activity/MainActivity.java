@@ -24,12 +24,15 @@ import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.emdoor.yispace.ui.fragment.FaceClassFragment;
+import com.emdoor.yispace.ui.fragment.HomeFragment;
 import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
 import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
 import com.emdoor.yispace.ui.fragment.SceneClassFragment;
 import com.emdoor.yispace.utils.RequestType;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // 加载首页fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction newFragmentTransaction = fragmentManager.beginTransaction();
+        loadHomeFragment(newFragmentTransaction);
         toolbar();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
@@ -60,9 +67,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit: "+query);
-                //todo:  搜索操作
+                //搜索操作
+                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO,query,query);
+                // 使用 FragmentManager 加载并显示新的 Fragment
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, photoDetailsFragment) // R.id.fragment_container 是你放置 Fragment 的容器的布局 ID
+                        .addToBackStack(null) // 将当前 Fragment 加入回退栈，以便返回时能回到前一个 Fragment
+                        .commit();
                 return false;
             }
+
             // 当搜索内容改变时触发该方法
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -91,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         // 设置 ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -134,7 +147,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction newFragmentTransaction = fragmentManager.beginTransaction();
         int itemId = item.getItemId();
-        if (itemId == R.id.menu_all_photos) {
+        if (itemId == R.id.menu_home) {
+            // 处理关于的逻辑
+            loadHomeFragment(newFragmentTransaction);
+        }else if (itemId == R.id.menu_all_photos) {
             // 处理关于的逻辑
             loadAllPhotosFragment(newFragmentTransaction);
         } else if (itemId == R.id.menu_scene_classification) {
@@ -157,6 +173,15 @@ public class MainActivity extends AppCompatActivity {
         }
         // 关闭侧滑菜单
         drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    //  加载首页Fragment
+    private void loadHomeFragment(FragmentTransaction fragmentTransaction) {
+        // 替换 fragment_container 中的内容为 AllPhotosFragment
+        HomeFragment newFragment = new HomeFragment();
+        fragmentTransaction.replace(R.id.fragment_container, newFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     //  加载全部照片Fragment
