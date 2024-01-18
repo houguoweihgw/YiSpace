@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--照片大小 0.7MB (688091字节)
-照片宽度 1536像素
-照片高度 2048像素
-相机品牌 Apple
-相机型号 iPhone 14 Pro
-曝光时间 1/480s
-光圈值 f/1.78
-ISO速度等级 80
-焦距 6.86mm
-拍摄时间 2023年10月6日 周五 01:44:20
-地理坐标 28.68N/115.86E (11.96m)
-标签 海滩,长廊,海岸-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/choose_photo_layout"
     android:layout_width="match_parent"

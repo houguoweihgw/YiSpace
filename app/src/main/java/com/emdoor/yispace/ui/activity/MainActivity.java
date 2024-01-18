@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
-        if (LoginResponseSingleton.getInstance().getCurrentUser() != null){
+        if (LoginResponseSingleton.getInstance().getCurrentUser() != null) {
             Log.d(TAG, "onCreate: " + LoginResponseSingleton.getInstance().getCurrentUser().toString());
             // 展示侧边栏的用户名
             String username = LoginResponseSingleton.getInstance().getCurrentUser().getUsername();
@@ -76,27 +76,27 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if (itemId == R.id.menu_all_photos) {
             // 处理关于的逻辑
-            Toast.makeText(this, "全部照片", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "全部照片", Toast.LENGTH_SHORT).show();
             loadAllPhotosFragment(newFragmentTransaction);
         } else if (itemId == R.id.menu_scene_classification) {
             // 处理登出的逻辑
-            Toast.makeText(this, "场景分类", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "场景分类", Toast.LENGTH_SHORT).show();
             loadSceneClassFragment(newFragmentTransaction);
-        }else if (itemId == R.id.menu_person_classification) {
+        } else if (itemId == R.id.menu_person_classification) {
             // 处理登出的逻辑
-            Toast.makeText(this, "人物分类", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "人物分类", Toast.LENGTH_SHORT).show();
             loadFaceClassFragment(newFragmentTransaction);
-        }else if (itemId == R.id.menu_collection) {
+        } else if (itemId == R.id.menu_collection) {
             // 处理登出的逻辑
-            Toast.makeText(this, "我的收藏", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "我的收藏", Toast.LENGTH_SHORT).show();
             loadLikedPhotosFragment(newFragmentTransaction);
-        }else if (itemId == R.id.menu_recycle) {
+        } else if (itemId == R.id.menu_recycle) {
             // 处理登出的逻辑
-            Toast.makeText(this, "回收站", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "回收站", Toast.LENGTH_SHORT).show();
             loadRecycledPhotosFragment(newFragmentTransaction);
-        }else if (itemId == R.id.menu_about) {
+        } else if (itemId == R.id.menu_about) {
             // 处理登出的逻辑
-            Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
             loadAboutFragment(newFragmentTransaction);
         } else {
             // 处理其他菜单项的逻辑
@@ -108,11 +108,12 @@ public class MainActivity extends AppCompatActivity {
     //  加载全部照片Fragment
     private void loadAllPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
-        AllPhotosFragment newFragment = new AllPhotosFragment(RequestType.ALL_PHOTO,null);
+        AllPhotosFragment newFragment = new AllPhotosFragment(RequestType.ALL_PHOTO, null);
         fragmentTransaction.replace(R.id.fragment_container, newFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     //  加载场景分类Fragment
     private void loadSceneClassFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     //  加载人物分类Fragment
     private void loadFaceClassFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     //  加载收藏照片Fragment
     private void loadLikedPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     //  加载回收站Fragment
     private void loadRecycledPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     //   加载关于Fragment
     private void loadAboutFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AboutFragment

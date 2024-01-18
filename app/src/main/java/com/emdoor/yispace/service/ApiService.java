@@ -3,6 +3,8 @@ package com.emdoor.yispace.service;
 
 
 import com.emdoor.yispace.request.DeletePhotoRequest;
+import com.emdoor.yispace.request.RecoverPhotoRequest;
+import com.emdoor.yispace.request.RemovePhotoRequest;
 import com.emdoor.yispace.response.FaceResponse;
 import com.emdoor.yispace.response.LoginResponse;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -71,4 +73,10 @@ public interface ApiService {
     // 批量删除某些照片
     @POST("/home/deleteSelectedPhotos")
     Call<Response> deleteSelectedPhotos(@Body DeletePhotoRequest photos);
+
+    @POST("/home/recoverBatchPhotos")
+    Call<Response> recoverBatchPhotos(@Body RecoverPhotoRequest photos);
+
+    @POST("/home/batchDeletePhotos")
+    Call<Response> batchDeletePhotos(@Body RemovePhotoRequest photos);
 }

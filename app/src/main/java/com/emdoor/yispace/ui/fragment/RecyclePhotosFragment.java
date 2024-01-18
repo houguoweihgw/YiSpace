@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
+import com.emdoor.yispace.event.RecyclePhotoEvent;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.response.RecycledPhotosResponse;
 import com.emdoor.yispace.service.ApiService;
@@ -21,8 +22,13 @@ import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -44,6 +50,7 @@ public class RecyclePhotosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -77,7 +84,7 @@ public class RecyclePhotosFragment extends Fragment {
             @Override
             public void onItemClick(Photo photo) {
                 // 创建一个新的 Fragment 实例
-                PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment();
+                PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment(true);
 
                 // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
                 Bundle bundle = new Bundle();
@@ -94,6 +101,25 @@ public class RecyclePhotosFragment extends Fragment {
         return view;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onPhotoRecycledEvent(RecyclePhotoEvent recyclePhotoEvent) {
+        Log.d(TAG, "recycle photo id: "+recyclePhotoEvent.getPhotoID());
+        // 在你的照片列表中找到被删除的照片并移除
+        Iterator<Photo> iterator = recycledPhotoList.iterator();
+        while (iterator.hasNext()) {
+            Photo temp = iterator.next();
+            Log.d(TAG, "current photo: "+ temp.getId());
+            if (temp.getId() == recyclePhotoEvent.getPhotoID()) {
+                iterator.remove();
+                break;
+            }
+        }
+        // 通知适配器刷新
+        if (photoAdapter != null) {
+            photoAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void loadPhotos() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
@@ -102,6 +128,7 @@ public class RecyclePhotosFragment extends Fragment {
             public void onResponse(Call<RecycledPhotosResponse> call, Response<RecycledPhotosResponse> response) {
                 if (response.isSuccessful()) {
                     RecycledPhotosResponse photosResponse = response.body();
+                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onResponse: " + photosResponse.getPhotos().size());
                     recycledPhotoList = photosResponse.getPhotos();
                     // 更新适配器数据
@@ -120,5 +147,11 @@ public class RecyclePhotosFragment extends Fragment {
                 Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

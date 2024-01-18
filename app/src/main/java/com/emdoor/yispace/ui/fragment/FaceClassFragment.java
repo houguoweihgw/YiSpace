@@ -98,6 +98,7 @@ public class FaceClassFragment extends Fragment {
             public void onResponse(Call<FaceResponse> call, Response<FaceResponse> response) {
                 if (response.isSuccessful()) {
                     FaceResponse facesResponse = response.body();
+                    Toast.makeText(getContext(), facesResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onResponse: " + facesResponse.toString());
                     faceList = facesResponse.getFaces();
                     // 更新适配器数据

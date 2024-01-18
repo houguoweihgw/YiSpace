@@ -97,6 +97,7 @@ public class SceneClassFragment extends Fragment {
             public void onResponse(Call<SceneResponse> call, Response<SceneResponse> response) {
                 if (response.isSuccessful()) {
                     SceneResponse sceneResponse = response.body();
+                    Toast.makeText(getContext(), sceneResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onResponse: " + sceneResponse.toString());
                     sceneList = sceneResponse.getLabels();
                     // 更新适配器数据

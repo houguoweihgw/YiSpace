@@ -20,8 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
+import com.emdoor.yispace.event.LikedPhotoEvent;
+import com.emdoor.yispace.event.RecyclePhotoEvent;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.request.DeletePhotoRequest;
+import com.emdoor.yispace.request.RecoverPhotoRequest;
+import com.emdoor.yispace.request.RemovePhotoRequest;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
@@ -36,6 +40,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PhotoDetailsFragment extends Fragment {
+    private static boolean isRecycle =  false;
     private Photo photo;
     private ImageView imageView;
     private RelativeLayout overlayLayout;
@@ -46,8 +51,8 @@ public class PhotoDetailsFragment extends Fragment {
     private TextView nameTextView;
     private static final String TAG = "PhotoDetailsFragment";
 
-    public static PhotoDetailsFragment newInstance() {
-        return new PhotoDetailsFragment();
+    public PhotoDetailsFragment(boolean isRecycle) {
+        this.isRecycle = isRecycle;
     }
 
     @Override
@@ -77,12 +82,44 @@ public class PhotoDetailsFragment extends Fragment {
             nameTextView.setText(photo.getTitle());
         }
 
-        if (photo.isCollected()){
-            isLikedImageView.setImageResource(R.drawable.ic_like);
+        // 不为回收站的话就不用显示收藏状态
+        if (!isRecycle){
+            if (photo.isCollected()){
+                isLikedImageView.setImageResource(R.drawable.ic_like);
+            }
+            else {
+                isLikedImageView.setImageResource(R.drawable.ic_nolike);
+            }
+            //  设置点击点赞按钮事件监听器
+            isLikedImageView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {// 在这里执行点击后的操作，例如切换照片源
+                    if (photo.isCollected()) {
+                        // 如果已经点赞，取消点赞，切换为未点赞的照片
+                        isLikedImageView.setImageResource(R.drawable.ic_nolike);
+                        togglePhotoCollected(photo);
+                        LikedPhotoEvent likedPhotoEvent = new LikedPhotoEvent(photo.getId());
+                        EventBus.getDefault().post(likedPhotoEvent);
+                    } else {
+                        // 如果未点赞，执行点赞操作，切换为点赞的照片
+                        isLikedImageView.setImageResource(R.drawable.ic_like);
+                        togglePhotoCollected(photo);
+                    }
+                    // 切换点赞状态
+                    photo.setCollected(!photo.isCollected());
+                }
+            });
         }
         else {
-            isLikedImageView.setImageResource(R.drawable.ic_nolike);
+            isLikedImageView.setImageResource(R.drawable.ic_recycle);
+            isLikedImageView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    recyclePhoto(photo);
+                }
+            });
         }
+
         // 设置点击照片事件监听器
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,23 +128,7 @@ public class PhotoDetailsFragment extends Fragment {
                 toggleOverlayVisibility();
             }
         });
-        //  设置点击点赞按钮事件监听器
-        isLikedImageView.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {// 在这里执行点击后的操作，例如切换照片源
-                if (photo.isCollected()) {
-                    // 如果已经点赞，取消点赞，切换为未点赞的照片
-                    isLikedImageView.setImageResource(R.drawable.ic_nolike);
-                    togglePhotoCollected(photo);
-                } else {
-                    // 如果未点赞，执行点赞操作，切换为点赞的照片
-                    isLikedImageView.setImageResource(R.drawable.ic_like);
-                    togglePhotoCollected(photo);
-                }
-                // 切换点赞状态
-                photo.setCollected(!photo.isCollected());
-            }
-        });
+
         // 设置点击详情按钮事件监听器
         metaDataImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,12 +176,64 @@ public class PhotoDetailsFragment extends Fragment {
             }
         });
         // 设置点击删除按钮时间事件监听器
-        deleteImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deletePhoto(photo);
-            }
-        });
+
+        // 不为回收站的话就是普通删除
+        if (!isRecycle) {
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme);
+                    View bottomView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_confirm, null);
+                    TextView confirmView = bottomView.findViewById(R.id.confirm_delete);
+                    confirmView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            bottomSheetDialog.dismiss();
+                            deletePhoto(photo);
+                        }
+                    });
+
+                    TextView cancelView = bottomView.findViewById(R.id.cancel_delete);
+                    cancelView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                    bottomSheetDialog.setContentView(bottomView);
+                    bottomSheetDialog.show();
+                }
+            });
+        }
+        else {
+            // 为回收站的话就是彻底清除
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme);
+                    View bottomView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_confirm, null);
+                    TextView confirmView = bottomView.findViewById(R.id.confirm_delete);
+                    confirmView.setText("确认彻底清除");
+                    confirmView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            bottomSheetDialog.dismiss();
+                            removePhoto(photo);
+                        }
+                    });
+
+                    TextView cancelView = bottomView.findViewById(R.id.cancel_delete);
+                    cancelView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                    bottomSheetDialog.setContentView(bottomView);
+                    bottomSheetDialog.show();
+                }
+            });
+        }
         return view;
     }
 
@@ -171,6 +244,7 @@ public class PhotoDetailsFragment extends Fragment {
             public void onResponse(Call<com.emdoor.yispace.response.Response> call, Response<com.emdoor.yispace.response.Response> response) {
                 if (response.isSuccessful()) {
                     com.emdoor.yispace.response.Response photosResponse = response.body();
+                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onResponse: " + photosResponse.toString());
                 } else {
                     Log.d(TAG, "onResponse: " + response);
@@ -201,6 +275,72 @@ public class PhotoDetailsFragment extends Fragment {
                     Log.d(TAG, "onResponse: to be deleted"+photo.getId());
                     // 返回到上一个Fragment
                     getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onResponse: " + photosResponse.toString());
+                } else {
+                    Log.d(TAG, "onResponse: " + response);
+                }
+            }
+            @Override
+            public void onFailure(Call<com.emdoor.yispace.response.Response> call, Throwable t) {
+                // 网络请求失败后的处理逻辑
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void removePhoto(Photo photo) {
+        apiService = RetrofitClient.getApiService();
+        RemovePhotoRequest request = new RemovePhotoRequest();
+        request.setUsername("admin");
+        int[] photoIDs = {photo.getId()};
+        request.setSelectedPhotos(photoIDs);
+        apiService.batchDeletePhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
+            @Override
+            public void onResponse(Call<com.emdoor.yispace.response.Response> call, Response<com.emdoor.yispace.response.Response> response) {
+                if (response.isSuccessful()) {
+                    com.emdoor.yispace.response.Response photosResponse = response.body();
+                    // 通过EventBus发送删除照片到AllPhotosFragment
+                    RecyclePhotoEvent recyclePhotoEvent = new RecyclePhotoEvent(photo.getId());
+                    // 通过EventBus发送回收照片到AllPhotosFragment
+                    EventBus.getDefault().post(recyclePhotoEvent);
+                    Log.d(TAG, "onResponse: to be removed"+photo.getId());
+                    // 返回到上一个Fragment
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onResponse: " + photosResponse.toString());
+                } else {
+                    Log.d(TAG, "onResponse: " + response);
+                }
+            }
+            @Override
+            public void onFailure(Call<com.emdoor.yispace.response.Response> call, Throwable t) {
+                // 网络请求失败后的处理逻辑
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void recyclePhoto(Photo photo) {
+        apiService = RetrofitClient.getApiService();
+        RecoverPhotoRequest request = new RecoverPhotoRequest();
+        request.setUsername("admin");
+        int[] photoIDs = {photo.getId()};
+        request.setSelectedPhotos(photoIDs);
+        apiService.recoverBatchPhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
+            @Override
+            public void onResponse(Call<com.emdoor.yispace.response.Response> call, Response<com.emdoor.yispace.response.Response> response) {
+                if (response.isSuccessful()) {
+                    com.emdoor.yispace.response.Response photosResponse = response.body();
+                    RecyclePhotoEvent recyclePhotoEvent = new RecyclePhotoEvent(photo.getId());
+                    // 通过EventBus发送回收照片到AllPhotosFragment
+                    EventBus.getDefault().post(recyclePhotoEvent);
+                    Log.d(TAG, "onResponse: to be recycle"+photo.getId());
+                    // 返回到上一个Fragment
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onResponse: " + photosResponse.toString());
                 } else {
                     Log.d(TAG, "onResponse: " + response);

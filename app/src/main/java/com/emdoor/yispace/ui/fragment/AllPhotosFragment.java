@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
+import com.emdoor.yispace.event.RecyclePhotoEvent;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -142,6 +143,7 @@ public class AllPhotosFragment extends Fragment {
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onResponse: " + photosResponse.toString());
                         photoList = photosResponse.getPhotos();
                         // 更新适配器数据
@@ -169,6 +171,7 @@ public class AllPhotosFragment extends Fragment {
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onResponse: " + photosResponse.toString());
                         photoList = photosResponse.getPhotos();
                         // 更新适配器数据
@@ -196,6 +199,7 @@ public class AllPhotosFragment extends Fragment {
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onResponse: " + photosResponse.toString());
                         photoList = photosResponse.getPhotos();
                         // 更新适配器数据
@@ -269,7 +273,7 @@ public class AllPhotosFragment extends Fragment {
             @Override
             public void onItemClick(Photo photo) {
                 // 创建一个新的 Fragment 实例
-                PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment();
+                PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment(false);
                 // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("photo", (Serializable) photo);
