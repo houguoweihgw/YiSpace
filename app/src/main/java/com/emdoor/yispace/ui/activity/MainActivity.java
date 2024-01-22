@@ -1,7 +1,16 @@
 package com.emdoor.yispace.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ContentUris;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,13 +23,22 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
+
 import com.emdoor.yispace.R;
+import com.emdoor.yispace.model.Photo;
+import com.emdoor.yispace.request.UploadPhotoRequest;
 import com.emdoor.yispace.response.LoginResponseSingleton;
+import com.emdoor.yispace.response.RecycledPhotosResponse;
+import com.emdoor.yispace.service.ApiService;
+import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.fragment.AboutFragment;
 import com.emdoor.yispace.ui.fragment.AllPhotosFragment;
 import com.emdoor.yispace.ui.fragment.FaceClassFragment;
@@ -28,11 +46,22 @@ import com.emdoor.yispace.ui.fragment.HomeFragment;
 import com.emdoor.yispace.ui.fragment.LikedPhotosFragment;
 import com.emdoor.yispace.ui.fragment.RecyclePhotosFragment;
 import com.emdoor.yispace.ui.fragment.SceneClassFragment;
+import com.emdoor.yispace.utils.RealPathUtil;
 import com.emdoor.yispace.utils.RequestType;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
 import java.io.Serializable;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+
+import com.emdoor.yispace.response.Response;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -41,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private androidx.appcompat.widget.SearchView searchView;
     private FloatingActionButton fab;
+    private ApiService apiService;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int REQUEST_STORAGE_PERMISSION = 2; // 可以是任何非负整数
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +92,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 处理按钮点击事件的代码
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // 申请权限
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+                } else {
+                    // 从相册选择照片（支持多选）
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);  // 允许多选
+                    startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                }
             }
         });
+
         // 设置搜索文本监听
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "onQueryTextSubmit: "+query);
+                Log.d(TAG, "onQueryTextSubmit: " + query);
                 //搜索操作
-                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO,query,query);
+                AllPhotosFragment photoDetailsFragment = new AllPhotosFragment(RequestType.SCENE_PHOTO, query, query);
                 // 使用 FragmentManager 加载并显示新的 Fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, photoDetailsFragment) // R.id.fragment_container 是你放置 Fragment 的容器的布局 ID
@@ -80,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             // 当搜索内容改变时触发该方法
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "onQueryTextChange: "+newText);
+                Log.d(TAG, "onQueryTextChange: " + newText);
                 //todo:  搜索推荐
                 return false;
             }
@@ -150,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.menu_home) {
             // 处理关于的逻辑
             loadHomeFragment(newFragmentTransaction);
-        }else if (itemId == R.id.menu_all_photos) {
+        } else if (itemId == R.id.menu_all_photos) {
             // 处理关于的逻辑
             loadAllPhotosFragment(newFragmentTransaction);
         } else if (itemId == R.id.menu_scene_classification) {
@@ -187,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
     //  加载全部照片Fragment
     private void loadAllPhotosFragment(FragmentTransaction fragmentTransaction) {
         // 替换 fragment_container 中的内容为 AllPhotosFragment
-        AllPhotosFragment newFragment = new AllPhotosFragment(RequestType.ALL_PHOTO, null,"全部照片");
+        AllPhotosFragment newFragment = new AllPhotosFragment(RequestType.ALL_PHOTO, null, "全部照片");
         fragmentTransaction.replace(R.id.fragment_container, newFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -251,5 +298,132 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            ClipData clipData = data.getClipData();
+            if (clipData != null) {
+                // 用户选择了多个照片
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    Uri uri = clipData.getItemAt(i).getUri();
+                    // 处理单个照片的逻辑
+                    handleSelectedImage(uri);
+                }
+            } else {
+                // 用户只选择了一个照片
+                Uri uri = data.getData();
+                // 处理单个照片的逻辑
+                handleSelectedImage(uri);
+            }
+        }
+    }
+
+    private void handleSelectedImage(Uri uri) {
+        String imagePath = null;
+        Log.d(TAG, "uri=: " + uri);
+        Log.d(TAG, "getUri`s Authority: " + uri.getAuthority());
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            // 如果document的类型是uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            Log.d(TAG, "docId=: " + docId);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                // 解析出数字格式的ID
+                String id = docId.split(":")[1];
+                Log.d(TAG, "id=: " + id);
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                Log.d(TAG, "selection=: " + selection);
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+                Log.d(TAG, "imagePath=: " + imagePath);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUIri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                Log.d(TAG, "contentUIri: " + contentUIri);
+                imagePath = getImagePath(contentUIri, null);
+                Log.d(TAG, "imagePath=: " + imagePath);
+            } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                imagePath = getImagePath(uri, null);
+            } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                imagePath = uri.getPath();
+            }
+            // 在获取图像路径后，将其封装为MultipartBody.Part
+            if (imagePath != null) {
+                uploadPhoto("admin", imagePath);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = getImagePath(uri, null);
+            // 在获取图像路径后，将其封装为MultipartBody.Part
+            if (imagePath != null) {
+                uploadPhoto("admin", imagePath);
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = uri.getPath();
+            // 在获取图像路径后，将其封装为MultipartBody.Part
+            if (imagePath != null) {
+                uploadPhoto("admin", imagePath);
+            }
+        }
+    }
+
+
+    private void uploadPhoto(String username, String imagePath) {
+        apiService = RetrofitClient.getApiService();
+        File file = new File(imagePath);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        // 将用户名作为 @Field 传递，以明确指定内容类型
+        RequestBody usernameRequestBody = RequestBody.create(MediaType.parse("text/plain"), username);
+        // 发起上传请求
+        Call<Response> call = apiService.uploadPhoto(usernameRequestBody, filePart);
+        call.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                if (response.isSuccessful()) {
+                    Response photosResponse = response.body();
+                    Toast.makeText(MainActivity.this, photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+//                    Log.d(TAG, "onResponse: " + photosResponse.getMessage());
+                    // 处理成功的响应
+                } else {
+                    // 处理错误的响应
+                    Log.d(TAG, "onResponse: " + response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                // 网络请求失败后的处理逻辑
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                Toast.makeText(MainActivity.this, "Network request failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    @SuppressLint("Range")
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        String[] projection = {MediaStore.Images.Media._ID};
+        // 通过uri和selection来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, projection, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+                long imageId = cursor.getLong(columnIndex);
+                // 通过imageId获取实际路径
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId);
+                Cursor imageCursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
+                if (imageCursor != null) {
+                    if (imageCursor.moveToFirst()) {
+                        path = imageCursor.getString(imageCursor.getColumnIndex(filePathColumn[0]));
+                    }
+                    imageCursor.close();
+                }
+            }
+            cursor.close();
+        }
+        Log.d(TAG, "getImagePath: " + path);
+        return path;
     }
 }

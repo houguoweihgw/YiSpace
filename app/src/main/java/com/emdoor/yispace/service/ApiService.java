@@ -5,6 +5,7 @@ package com.emdoor.yispace.service;
 import com.emdoor.yispace.request.DeletePhotoRequest;
 import com.emdoor.yispace.request.RecoverPhotoRequest;
 import com.emdoor.yispace.request.RemovePhotoRequest;
+import com.emdoor.yispace.request.UploadPhotoRequest;
 import com.emdoor.yispace.response.FaceResponse;
 import com.emdoor.yispace.response.LoginResponse;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -14,11 +15,15 @@ import com.emdoor.yispace.response.SceneResponse;
 import com.emdoor.yispace.response.TotalPhotosCountResponse;
 import com.emdoor.yispace.model.User;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -79,4 +84,17 @@ public interface ApiService {
 
     @POST("/home/batchDeletePhotos")
     Call<Response> batchDeletePhotos(@Body RemovePhotoRequest photos);
+
+    @GET("/home/welcomePhotos")
+    Call<PhotosResponse> welcomePhotos(@Query("username") String username);
+
+    @POST("/home/upload")
+    Call<Response> upload(@Body UploadPhotoRequest photos);
+
+    @Multipart
+    @POST("home/upload")  // 根据实际的服务端接口地址调整
+    Call<Response> uploadPhoto(
+            @Part("username") RequestBody username,
+            @Part MultipartBody.Part file
+    );
 }
