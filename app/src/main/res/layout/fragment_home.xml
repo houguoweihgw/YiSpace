@@ -5,14 +5,36 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.HomeFragment">
 
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/homefrag_vp">
+        </androidx.viewpager.widget.ViewPager>
+
     <TextView
         android:id="@+id/welcome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="欢迎 admin 来到智慧本地相册"
+        android:layout_marginTop="20dp"
         android:textAlignment="center"
-        android:layout_marginTop="30dp"
         android:textSize="20sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@+id/homefrag_vp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/homefrag_layout"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/homefrag_layout1"
+        android:orientation="vertical"
+        android:layout_below="@id/homefrag_vp"
+        android:layout_marginTop="80dp"/>
 
 </RelativeLayout>

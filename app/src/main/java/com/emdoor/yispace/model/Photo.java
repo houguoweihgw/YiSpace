@@ -10,6 +10,7 @@ public class Photo implements Serializable {
     private String file_content;
     private boolean collected;
     private ItemMetadata metadata;
+    private boolean selected = false;
 
     // 构造方法、getter和setter方法
 
@@ -69,6 +70,13 @@ public class Photo implements Serializable {
         this.metadata = metadata;
     }
 
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
     @Override
     public String toString() {
         return "Item{" +

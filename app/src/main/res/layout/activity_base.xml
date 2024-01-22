@@ -33,6 +33,19 @@
         <!-- 内容区域 -->
     </FrameLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="120dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_delete"
+        app:backgroundTint="#FFFFFF"
+        app:rippleColor="@color/primary"/>
+
     <!-- 在右下角添加FloatingActionButton -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/upload_button"
@@ -44,5 +57,5 @@
         android:layout_marginBottom="40dp"
         android:src="@drawable/ic_upload2"
         app:backgroundTint="#FFFFFF"
-        app:rippleColor="@color/primary"/> <!-- ic_add 是你加号按钮的图标，需要替换为你的图标资源 -->
+        app:rippleColor="@color/primary"/><!-- ic_add 是你加号按钮的图标，需要替换为你的图标资源 -->
 </RelativeLayout>

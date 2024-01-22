@@ -44,10 +44,6 @@ public class LikedPhotosFragment extends Fragment {
     private List<Photo> likedPhotoList = new ArrayList<>();
     private PhotoViewModel photoViewModel;
     private PhotoAdapter photoAdapter;
-    public static LikedPhotosFragment newInstance(String param1, String param2) {
-        LikedPhotosFragment fragment = new LikedPhotosFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,23 +86,28 @@ public class LikedPhotosFragment extends Fragment {
         photoAdapter = new PhotoAdapter(likedPhotoList);
         // 4.设置RecyclerView的布局管理器和适配器
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,  StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3,  StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(photoAdapter);
         photoAdapter.setOnItemClickListener(new PhotoAdapter.OnItemClickListener(){
             @Override
-            public void onItemClick(Photo photo) {
-                // 创建一个新的 Fragment 实例
-                PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment(false);
-                // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("photo", (Serializable) photo);
-                photoDetailsFragment.setArguments(bundle);
+            public void onItemClick(Photo photo,Boolean cancelSelect) {
+                if (!cancelSelect) {
+                    // 创建一个新的 Fragment 实例
+                    PhotoDetailsFragment photoDetailsFragment = new PhotoDetailsFragment(false);
+                    // 如果你需要传递数据给新的 Fragment，可以使用 setArguments 方法
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("photo", (Serializable) photo);
+                    photoDetailsFragment.setArguments(bundle);
 
-                // 使用 FragmentManager 加载并显示新的 Fragment
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, photoDetailsFragment) // R.id.fragment_container 是你放置 Fragment 的容器的布局 ID
-                        .addToBackStack(null) // 将当前 Fragment 加入回退栈，以便返回时能回到前一个 Fragment
-                        .commit();
+                    // 使用 FragmentManager 加载并显示新的 Fragment
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, photoDetailsFragment) // R.id.fragment_container 是你放置 Fragment 的容器的布局 ID
+                            .addToBackStack(null) // 将当前 Fragment 加入回退栈，以便返回时能回到前一个 Fragment
+                            .commit();
+                }
+                else{
+
+                }
             }
         });
         return view;
