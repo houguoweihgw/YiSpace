@@ -19,11 +19,13 @@ import com.emdoor.yispace.R;
 import com.emdoor.yispace.event.LikedPhotoEvent;
 import com.emdoor.yispace.event.RecyclePhotoEvent;
 import com.emdoor.yispace.model.Photo;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.response.PhotosResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.ui.adapter.PhotoViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,13 +46,14 @@ public class LikedPhotosFragment extends Fragment {
     private List<Photo> likedPhotoList = new ArrayList<>();
     private PhotoViewModel photoViewModel;
     private PhotoAdapter photoAdapter;
+    private Toolbar toolbar;
+    private FloatingActionButton upload_fab;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle("我的收藏");
     }
 
     @Override
@@ -64,6 +67,11 @@ public class LikedPhotosFragment extends Fragment {
         if (activity != null && activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().show();
         }
+
+        toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("我的收藏");
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
 
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.likedPhotosRecyclerView);
@@ -116,19 +124,21 @@ public class LikedPhotosFragment extends Fragment {
     private void loadPhotos() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
-        apiService.collectedPhotos("admin").enqueue(new Callback<PhotosResponse>() {
+        apiService.collectedPhotos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<PhotosResponse>() {
             @Override
             public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                 if (response.isSuccessful()) {
                     PhotosResponse photosResponse = response.body();
-                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse: " + photosResponse.toString());
-                    likedPhotoList = photosResponse.getPhotos();
-                    // 更新适配器数据
-                    if (photoAdapter != null) {
-                        photoAdapter.updatePhotos(likedPhotoList);
+                    if (photosResponse.getPhotos() != null) {
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onResponse: " + photosResponse.toString());
+                        likedPhotoList = photosResponse.getPhotos();
+                        // 更新适配器数据
+                        if (photoAdapter != null) {
+                            photoAdapter.updatePhotos(likedPhotoList);
+                        }
+                        photoViewModel.setPhotoList(likedPhotoList);
                     }
-                    photoViewModel.setPhotoList(likedPhotoList);
                 } else {
                     Log.d(TAG, "onResponse: " + response);
                 }

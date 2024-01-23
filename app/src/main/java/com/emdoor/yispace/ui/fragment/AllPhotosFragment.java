@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.request.DeletePhotoRequest;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -50,6 +51,8 @@ public class AllPhotosFragment extends Fragment {
     private List<Photo> photoList = new ArrayList<>();
     private PhotoViewModel photoViewModel;
     private FloatingActionButton del_fab;
+    private FloatingActionButton upload_fab;
+
     private Toolbar toolbar;
     private PhotoAdapter photoAdapter;
     private RequestType  requestType;
@@ -105,7 +108,7 @@ public class AllPhotosFragment extends Fragment {
             apiService = RetrofitClient.getApiService();
             // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
             // 获取照片总数
-            apiService.totalPhotosCount("admin").enqueue(new Callback<TotalPhotosCountResponse>() {
+            apiService.totalPhotosCount(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<TotalPhotosCountResponse>() {
                 @Override
                 public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
                     if (response.isSuccessful()) {
@@ -130,7 +133,7 @@ public class AllPhotosFragment extends Fragment {
             apiService = RetrofitClient.getApiService();
             // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
             // 获取照片总数
-            apiService.labelPhotoCount("admin",extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
+            apiService.labelPhotoCount(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(),extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
                 @Override
                 public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
                     if (response.isSuccessful()) {
@@ -155,7 +158,7 @@ public class AllPhotosFragment extends Fragment {
             apiService = RetrofitClient.getApiService();
             // LoginResponse currentUser = LoginResponseSingleton.getInstance().getCurrentUser();
             // 获取照片总数
-            apiService.clusterPhotoCount("admin",extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
+            apiService.clusterPhotoCount(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(),extraInfo).enqueue(new Callback<TotalPhotosCountResponse>() {
                 @Override
                 public void onResponse(Call<TotalPhotosCountResponse> call, Response<TotalPhotosCountResponse> response) {
                     if (response.isSuccessful()) {
@@ -181,19 +184,21 @@ public class AllPhotosFragment extends Fragment {
     private void loadPhotos() {
         if (requestType==RequestType.ALL_PHOTO) {
             // 查询照片
-            apiService.photos("admin", 1, totalPhotosCount).enqueue(new Callback<PhotosResponse>() {
+            apiService.photos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), 1, totalPhotosCount).enqueue(new Callback<PhotosResponse>() {
                 @Override
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
-                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onResponse: " + photosResponse.toString());
-                        photoList = photosResponse.getPhotos();
-                        // 更新适配器数据
-                        if (photoAdapter != null) {
-                            photoAdapter.updatePhotos(photoList);
+                        if (photosResponse.getPhotos()!=null) {
+                            Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onResponse: " + photosResponse.toString());
+                            photoList = photosResponse.getPhotos();
+                            // 更新适配器数据
+                            if (photoAdapter != null) {
+                                photoAdapter.updatePhotos(photoList);
+                            }
+                            photoViewModel.setPhotoList(photoList);
                         }
-                        photoViewModel.setPhotoList(photoList);
                     } else {
                         Log.d(TAG, "onResponse: " + response);
                     }
@@ -209,19 +214,21 @@ public class AllPhotosFragment extends Fragment {
         }
         else if (requestType == RequestType.SCENE_PHOTO){
             // 查询照片
-            apiService.labelPhotos("admin", 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
+            apiService.labelPhotos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
                 @Override
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
-                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onResponse: " + photosResponse.toString());
-                        photoList = photosResponse.getPhotos();
-                        // 更新适配器数据
-                        if (photoAdapter != null) {
-                            photoAdapter.updatePhotos(photoList);
+                        if (photosResponse.getPhotos()!=null) {
+                            Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onResponse: " + photosResponse.toString());
+                            photoList = photosResponse.getPhotos();
+                            // 更新适配器数据
+                            if (photoAdapter != null) {
+                                photoAdapter.updatePhotos(photoList);
+                            }
+                            photoViewModel.setPhotoList(photoList);
                         }
-                        photoViewModel.setPhotoList(photoList);
                     } else {
                         Log.d(TAG, "onResponse: " + response);
                     }
@@ -237,19 +244,21 @@ public class AllPhotosFragment extends Fragment {
         }
         else if (requestType == RequestType.FACE_PHOTO){
             // 查询照片
-            apiService.clusterPhotos("admin", 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
+            apiService.clusterPhotos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), 1, totalPhotosCount,extraInfo).enqueue(new Callback<PhotosResponse>() {
                 @Override
                 public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                     if (response.isSuccessful()) {
                         PhotosResponse photosResponse = response.body();
-                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onResponse: " + photosResponse.toString());
-                        photoList = photosResponse.getPhotos();
-                        // 更新适配器数据
-                        if (photoAdapter != null) {
-                            photoAdapter.updatePhotos(photoList);
+                        if (photosResponse.getPhotos()!=null) {
+                            Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onResponse: " + photosResponse.toString());
+                            photoList = photosResponse.getPhotos();
+                            // 更新适配器数据
+                            if (photoAdapter != null) {
+                                photoAdapter.updatePhotos(photoList);
+                            }
+                            photoViewModel.setPhotoList(photoList);
                         }
-                        photoViewModel.setPhotoList(photoList);
                     } else {
                         Log.d(TAG, "onResponse: " + response);
                     }
@@ -268,7 +277,7 @@ public class AllPhotosFragment extends Fragment {
     private void deleteSelectedPhotos() {
         apiService = RetrofitClient.getApiService();
         DeletePhotoRequest request = new DeletePhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int selectedNumber = selectedPhotos.size();
         int[] photoIDs = selectedPhotos.stream().mapToInt(Integer::intValue).toArray();
         request.setPhotoIDs(photoIDs);
@@ -342,6 +351,9 @@ public class AllPhotosFragment extends Fragment {
         if (activity != null && activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().show();
         }
+        toolbar.setTitle(fragmentTitle);
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         // 2.加载照片数据
@@ -433,5 +445,6 @@ public class AllPhotosFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        del_fab.setVisibility(View.GONE);
     }
 }

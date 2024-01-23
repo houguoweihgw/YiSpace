@@ -19,15 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Photo;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.response.PhotosResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.HomePagerAdapter;
 import com.emdoor.yispace.utils.ImageUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,11 @@ public class HomeFragment extends Fragment {
     private List<ImageView> ivList;
     //声明管理指示器小圆点集合
     private List<ImageView>pointList;
+    private FloatingActionButton del_fab;
+    private FloatingActionButton rec_fab;
+    private Toolbar toolbar;
+    private FloatingActionButton upload_fab;
+
 
     //完成定时装置，实现自动滑动的效果
     @SuppressLint("HandlerLeak")
@@ -73,14 +81,23 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setTitle("亿空间");
+        del_fab = getActivity().findViewById(R.id.delete_button);
+        del_fab.setVisibility(View.GONE);
+        rec_fab = getActivity().findViewById(R.id.recycle_button);
+        rec_fab.setVisibility(View.GONE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_home, container, false);
+        toolbar.setTitle("亿空间");
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
+        TextView textView = view.findViewById(R.id.welcome);
+        textView.setText("欢迎 "+LoginResponseSingleton.getInstance().getCurrentUser().getUsername()+" 来到智慧本地相册");
         loadPhotos();
         initView(view);
         return view;
@@ -145,18 +162,19 @@ public class HomeFragment extends Fragment {
     private void loadPhotos() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
-        apiService.welcomePhotos("admin").enqueue(new Callback<PhotosResponse>() {
+        apiService.welcomePhotos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<PhotosResponse>() {
             @Override
             public void onResponse(Call<PhotosResponse> call, Response<PhotosResponse> response) {
                 if (response.isSuccessful()) {
                     PhotosResponse photosResponse = response.body();
-                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse welcome photo size：" + photosResponse.getPhotos().size());
-                    welcomePhotos = photosResponse.getPhotos();
-                    initPager();
-                    setVPListener();
-                    //延迟五秒钟发送一条消息，通知可以切换viewpager的图片了
-                    handler.sendEmptyMessageDelayed(1,5000);
+                    if (photosResponse.getPhotos()!=null){
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        welcomePhotos = photosResponse.getPhotos();
+                        initPager();
+                        setVPListener();
+                        //延迟五秒钟发送一条消息，通知可以切换viewpager的图片了
+                        handler.sendEmptyMessageDelayed(1,5000);
+                    }
                 } else {
                     Log.d(TAG, "onResponse: " + response);
                 }
@@ -169,6 +187,13 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), "Network request failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        del_fab.setVisibility(View.GONE);
+        rec_fab.setVisibility(View.GONE);
     }
 
 }

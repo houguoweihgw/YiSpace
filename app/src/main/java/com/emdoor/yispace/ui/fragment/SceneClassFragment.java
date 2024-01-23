@@ -16,12 +16,14 @@ import android.widget.Toast;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Scene;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.response.SceneResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.SceneAdapter;
 import com.emdoor.yispace.ui.adapter.SceneViewModel;
 import com.emdoor.yispace.utils.RequestType;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,16 +36,15 @@ import retrofit2.Response;
 public class SceneClassFragment extends Fragment {
     private final String  TAG = "SceneClassFragment";
     private ApiService apiService;
-
     private List<Scene> sceneList = new ArrayList<>();
     private SceneAdapter  sceneAdapter;
     private SceneViewModel sceneViewModel;
+    private FloatingActionButton upload_fab;
+    private Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle("场景分类");
     }
 
     @Override
@@ -52,6 +53,10 @@ public class SceneClassFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_scene_class, container, false);
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.SceneClassRecyclerView);
+        toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("场景分类");
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
         // 2.加载照片数据
 
         // 初始化 ViewModel
@@ -95,19 +100,21 @@ public class SceneClassFragment extends Fragment {
     private void loadScenes() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
-        apiService.sceneLabels("admin").enqueue(new Callback<SceneResponse>() {
+        apiService.sceneLabels(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<SceneResponse>() {
             @Override
             public void onResponse(Call<SceneResponse> call, Response<SceneResponse> response) {
                 if (response.isSuccessful()) {
                     SceneResponse sceneResponse = response.body();
-                    Toast.makeText(getContext(), sceneResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse: " + sceneResponse.toString());
-                    sceneList = sceneResponse.getLabels();
-                    // 更新适配器数据
-                    if (sceneAdapter != null) {
-                        sceneAdapter.updateScenes(sceneList);
+                    if (sceneResponse.getLabels()!=null) {
+                        Toast.makeText(getContext(), sceneResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onResponse: " + sceneResponse.toString());
+                        sceneList = sceneResponse.getLabels();
+                        // 更新适配器数据
+                        if (sceneAdapter != null) {
+                            sceneAdapter.updateScenes(sceneList);
+                        }
+                        sceneViewModel.setSceneList(sceneList);
                     }
-                    sceneViewModel.setSceneList(sceneList);
                 } else {
                     Log.d(TAG, "onResponse: " + response);
                 }

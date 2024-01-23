@@ -34,6 +34,7 @@ import android.Manifest;
 
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Photo;
+import com.emdoor.yispace.model.User;
 import com.emdoor.yispace.request.UploadPhotoRequest;
 import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.response.RecycledPhotosResponse;
@@ -349,19 +350,19 @@ public class MainActivity extends AppCompatActivity {
             }
             // 在获取图像路径后，将其封装为MultipartBody.Part
             if (imagePath != null) {
-                uploadPhoto("admin", imagePath);
+                uploadPhoto(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), imagePath);
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             imagePath = getImagePath(uri, null);
             // 在获取图像路径后，将其封装为MultipartBody.Part
             if (imagePath != null) {
-                uploadPhoto("admin", imagePath);
+                uploadPhoto(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), imagePath);
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             imagePath = uri.getPath();
             // 在获取图像路径后，将其封装为MultipartBody.Part
             if (imagePath != null) {
-                uploadPhoto("admin", imagePath);
+                uploadPhoto(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), imagePath);
             }
         }
     }

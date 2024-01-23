@@ -17,11 +17,13 @@ import android.widget.Toast;
 import com.emdoor.yispace.R;
 import com.emdoor.yispace.model.Face;
 import com.emdoor.yispace.response.FaceResponse;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.FaceAdapter;
 import com.emdoor.yispace.ui.adapter.FaceViewModel;
 import com.emdoor.yispace.utils.RequestType;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,11 +39,12 @@ public class FaceClassFragment extends Fragment {
     private List<Face> faceList = new ArrayList<>();
     private FaceAdapter faceAdapter;
     private FaceViewModel faceViewModel;
+    private Toolbar toolbar;
+    private FloatingActionButton upload_fab;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle("人物分类");
     }
 
     @Override
@@ -50,8 +53,11 @@ public class FaceClassFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_face_class, container, false);
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.faceClassRecyclerView);
+        toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("人物分类");
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
         // 2.加载照片数据
-
         // 初始化 ViewModel
         faceViewModel = new ViewModelProvider(this).get(FaceViewModel.class);
         // 尝试从 ViewModel 中获取数据
@@ -96,19 +102,21 @@ public class FaceClassFragment extends Fragment {
     private void loadFaces() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
-        apiService.faceClusters("admin").enqueue(new Callback<FaceResponse>() {
+        apiService.faceClusters(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<FaceResponse>() {
             @Override
             public void onResponse(Call<FaceResponse> call, Response<FaceResponse> response) {
                 if (response.isSuccessful()) {
                     FaceResponse facesResponse = response.body();
-                    Toast.makeText(getContext(), facesResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse: " + facesResponse.toString());
-                    faceList = facesResponse.getFaces();
-                    // 更新适配器数据
-                    if (faceAdapter != null) {
-                        faceAdapter.updateScenes(faceList);
+                    if (facesResponse.getFaces()!=null) {
+                        Toast.makeText(getContext(), facesResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onResponse: " + facesResponse.toString());
+                        faceList = facesResponse.getFaces();
+                        // 更新适配器数据
+                        if (faceAdapter != null) {
+                            faceAdapter.updateScenes(faceList);
+                        }
+                        faceViewModel.setFaceList(faceList);
                     }
-                    faceViewModel.setFaceList(faceList);
                 } else {
                     Log.d(TAG, "onResponse: " + response);
                 }

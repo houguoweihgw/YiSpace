@@ -15,7 +15,7 @@
         android:id="@+id/welcome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="欢迎 admin 来到智慧本地相册"
+        android:text="欢迎 用户 来到智慧本地相册"
         android:layout_marginTop="20dp"
         android:textAlignment="center"
         android:textSize="20sp" />

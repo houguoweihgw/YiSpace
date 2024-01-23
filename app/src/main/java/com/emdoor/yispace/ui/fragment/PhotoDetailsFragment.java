@@ -28,12 +28,14 @@ import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.request.DeletePhotoRequest;
 import com.emdoor.yispace.request.RecoverPhotoRequest;
 import com.emdoor.yispace.request.RemovePhotoRequest;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
 import com.emdoor.yispace.ui.adapter.PhotoAdapter;
 import com.emdoor.yispace.utils.DateUtils;
 import com.emdoor.yispace.utils.ImageUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,6 +53,7 @@ public class PhotoDetailsFragment extends Fragment {
     private ImageButton deleteImageView;
     private ApiService apiService;
     private TextView nameTextView;
+    private FloatingActionButton upload_fab;
     private static final String TAG = "PhotoDetailsFragment";
 
     public PhotoDetailsFragment(boolean isRecycle) {
@@ -74,6 +77,10 @@ public class PhotoDetailsFragment extends Fragment {
         if (activity != null && activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().hide();
         }
+
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.GONE);
+
 
         imageView = view.findViewById(R.id.imageViewDetails);
         overlayLayout = view.findViewById(R.id.overlayLayout);
@@ -249,7 +256,7 @@ public class PhotoDetailsFragment extends Fragment {
 
     private void togglePhotoCollected(Photo photo) {
         apiService = RetrofitClient.getApiService();
-        apiService.toggleCollected("admin", String.valueOf(photo.getId())).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
+        apiService.toggleCollected(LoginResponseSingleton.getInstance().getCurrentUser().getUsername(), String.valueOf(photo.getId())).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
             @Override
             public void onResponse(Call<com.emdoor.yispace.response.Response> call, Response<com.emdoor.yispace.response.Response> response) {
                 if (response.isSuccessful()) {
@@ -272,7 +279,7 @@ public class PhotoDetailsFragment extends Fragment {
     private void deletePhoto(Photo photo) {
         apiService = RetrofitClient.getApiService();
         DeletePhotoRequest request = new DeletePhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int[] photoIDs = {photo.getId()};
         request.setPhotoIDs(photoIDs);
         apiService.deleteSelectedPhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
@@ -303,7 +310,7 @@ public class PhotoDetailsFragment extends Fragment {
     private void removePhoto(Photo photo) {
         apiService = RetrofitClient.getApiService();
         RemovePhotoRequest request = new RemovePhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int[] photoIDs = {photo.getId()};
         request.setSelectedPhotos(photoIDs);
         apiService.batchDeletePhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
@@ -336,7 +343,7 @@ public class PhotoDetailsFragment extends Fragment {
     private void recyclePhoto(Photo photo) {
         apiService = RetrofitClient.getApiService();
         RecoverPhotoRequest request = new RecoverPhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int[] photoIDs = {photo.getId()};
         request.setSelectedPhotos(photoIDs);
         apiService.recoverBatchPhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {

@@ -22,6 +22,7 @@ import com.emdoor.yispace.model.Photo;
 import com.emdoor.yispace.request.DeletePhotoRequest;
 import com.emdoor.yispace.request.RecoverPhotoRequest;
 import com.emdoor.yispace.request.RemovePhotoRequest;
+import com.emdoor.yispace.response.LoginResponseSingleton;
 import com.emdoor.yispace.response.RecycledPhotosResponse;
 import com.emdoor.yispace.service.ApiService;
 import com.emdoor.yispace.service.RetrofitClient;
@@ -52,6 +53,7 @@ public class RecyclePhotosFragment extends Fragment {
     private PhotoAdapter photoAdapter;
     private FloatingActionButton del_fab;
     private FloatingActionButton rec_fab;
+    private FloatingActionButton upload_fab;
     private Toolbar toolbar;
     private ArrayList<Integer> selectedPhotos = new ArrayList<>();
 
@@ -137,6 +139,10 @@ public class RecyclePhotosFragment extends Fragment {
         if (activity != null && activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().show();
         }
+        toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle("我的收藏");
+        upload_fab = getActivity().findViewById(R.id.upload_button);
+        upload_fab.setVisibility(View.VISIBLE);
 
         // 1.找到RecyclerView控件的引用
         RecyclerView recyclerView = view.findViewById(R.id.recycledPhotosRecyclerView);
@@ -232,7 +238,7 @@ public class RecyclePhotosFragment extends Fragment {
     private void removeSelectedPhotos() {
         apiService = RetrofitClient.getApiService();
         RemovePhotoRequest request = new RemovePhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int selectedNumber = selectedPhotos.size();
         int[] photoIDs = selectedPhotos.stream().mapToInt(Integer::intValue).toArray();
         request.setSelectedPhotos(photoIDs);
@@ -279,7 +285,7 @@ public class RecyclePhotosFragment extends Fragment {
     private void recycleSelectedPhotos() {
         apiService = RetrofitClient.getApiService();
         RecoverPhotoRequest request = new RecoverPhotoRequest();
-        request.setUsername("admin");
+        request.setUsername(LoginResponseSingleton.getInstance().getCurrentUser().getUsername());
         int[] photoIDs = selectedPhotos.stream().mapToInt(Integer::intValue).toArray();
         request.setSelectedPhotos(photoIDs);
         apiService.recoverBatchPhotos(request).enqueue(new Callback<com.emdoor.yispace.response.Response>() {
@@ -344,19 +350,21 @@ public class RecyclePhotosFragment extends Fragment {
     private void loadPhotos() {
         apiService = RetrofitClient.getApiService();
         // 查询照片
-        apiService.recycledPhotos("admin").enqueue(new Callback<RecycledPhotosResponse>() {
+        apiService.recycledPhotos(LoginResponseSingleton.getInstance().getCurrentUser().getUsername()).enqueue(new Callback<RecycledPhotosResponse>() {
             @Override
             public void onResponse(Call<RecycledPhotosResponse> call, Response<RecycledPhotosResponse> response) {
                 if (response.isSuccessful()) {
                     RecycledPhotosResponse photosResponse = response.body();
-                    Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse: " + photosResponse.getPhotos().size());
-                    recycledPhotoList = photosResponse.getPhotos();
-                    // 更新适配器数据
-                    if (photoAdapter != null) {
-                        photoAdapter.updatePhotos(recycledPhotoList);
+                    if (photosResponse.getPhotos()!= null) {
+                        Toast.makeText(getContext(), photosResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onResponse: " + photosResponse.getPhotos().size());
+                        recycledPhotoList = photosResponse.getPhotos();
+                        // 更新适配器数据
+                        if (photoAdapter != null) {
+                            photoAdapter.updatePhotos(recycledPhotoList);
+                        }
+                        photoViewModel.setPhotoList(recycledPhotoList);
                     }
-                    photoViewModel.setPhotoList(recycledPhotoList);
                 } else {
                     Log.d(TAG, "onResponse: " + response);
                 }
@@ -374,5 +382,7 @@ public class RecyclePhotosFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        del_fab.setVisibility(View.GONE);
+        rec_fab.setVisibility(View.GONE);
     }
 }

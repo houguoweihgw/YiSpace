@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
     private Button loginButton;
     private EditText userText, passwordText;
+    private TextView registerText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,16 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         userText = findViewById(R.id.username);
         passwordText = findViewById(R.id.password);
+        registerText = findViewById(R.id.register);
+
+        registerText.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
         passwordText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -78,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
                         }
                     }
-
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
                         // 网络请求失败后的处理逻辑

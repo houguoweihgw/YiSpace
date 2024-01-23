@@ -6,6 +6,7 @@ import com.emdoor.yispace.request.DeletePhotoRequest;
 import com.emdoor.yispace.request.RecoverPhotoRequest;
 import com.emdoor.yispace.request.RemovePhotoRequest;
 import com.emdoor.yispace.request.UploadPhotoRequest;
+import com.emdoor.yispace.request.UserRegisterRequest;
 import com.emdoor.yispace.response.FaceResponse;
 import com.emdoor.yispace.response.LoginResponse;
 import com.emdoor.yispace.response.PhotosResponse;
@@ -30,6 +31,8 @@ public interface ApiService {
     // 登陆
     @POST("/api/login")
     Call<LoginResponse> login(@Body User loginRequest);
+    @POST("/api/register")
+    Call<Response> register(@Body UserRegisterRequest userRegisterRequest);
 
     // 查询所有照片
     @GET("/home/photos")
